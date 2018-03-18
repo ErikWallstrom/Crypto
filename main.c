@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
-#include "crypto.h"
+#include <locale.h>
 #include "log.h"
 #include "test.h"
 
@@ -85,14 +85,19 @@ void app_ctor(GtkApplication* app, void* userdata)
 	gtk_window_set_titlebar(GTK_WINDOW(window), headerbar);
 	gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
 
-	GtkWidget* allpage = allpage_new();
-	gtk_container_add(GTK_CONTAINER(window), allpage);
+	GtkWidget* frontpage = frontpage_new();
+	gtk_widget_set_size_request(frontpage, 800, 800);
+	gtk_widget_set_halign(frontpage, GTK_ALIGN_CENTER);
+	//gtk_widget_set_valign(frontpage, GTK_ALIGN_CENTER);
+	gtk_container_add(GTK_CONTAINER(window), frontpage);
 	gtk_widget_show_all(window);
+	gtk_window_resize(GTK_WINDOW(window), 650, 800);
 }
 
 int main(int argc, char* argv[])
 {
 	log_seterrorhandler(onerror, NULL);
+	setlocale(LC_NUMERIC, "");
 
 	GtkApplication* app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
 	g_signal_connect(app, "startup", G_CALLBACK(app_init), NULL);

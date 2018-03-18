@@ -3,6 +3,6 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget* allpage_new(void);
+GtkWidget* frontpage_new(void);
 
 #endif
