@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "crypto.h"
 #include "log.h"
+#include "test.h"
 
 void onerror(void* userdata)
 {
@@ -84,7 +85,8 @@ void app_ctor(GtkApplication* app, void* userdata)
 	gtk_window_set_titlebar(GTK_WINDOW(window), headerbar);
 	gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
 
-	crypto_init(window);
+	GtkWidget* allpage = allpage_new();
+	gtk_container_add(GTK_CONTAINER(window), allpage);
 	gtk_widget_show_all(window);
 }
 

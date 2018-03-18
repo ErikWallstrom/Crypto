@@ -323,6 +323,9 @@ void crypto_init(GtkWidget* window)
 
 	GtkWidget* tree = gtk_tree_view_new();
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tree), GTK_TREE_MODEL(store));
+	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(tree), 1);
+
+
 	GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(
 		"Name",
 		renderer,
@@ -330,6 +333,7 @@ void crypto_init(GtkWidget* window)
 		NULL
 	);
 
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_sort_column_id(column, COLUMN_NAME);
 	gtk_tree_view_column_set_cell_data_func(
 		column, 
@@ -349,6 +353,7 @@ void crypto_init(GtkWidget* window)
 		NULL
 	);
 
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_sort_column_id(column, COLUMN_MARKETCAP);
 	gtk_tree_view_column_set_expand(column, 1);
 	gtk_tree_view_column_set_resizable(column, 1);
@@ -360,6 +365,7 @@ void crypto_init(GtkWidget* window)
 		NULL
 	);
 
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_sort_column_id(column, COLUMN_PRICE);
 	gtk_tree_view_column_set_expand(column, 1);
 	gtk_tree_view_column_set_resizable(column, 1);
@@ -371,6 +377,7 @@ void crypto_init(GtkWidget* window)
 		NULL
 	);
 
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_sort_column_id(column, COLUMN_CHANGE);
 	gtk_tree_view_column_set_cell_data_func(
 		column, 
