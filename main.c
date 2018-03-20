@@ -83,15 +83,44 @@ void app_ctor(GtkApplication* app, void* userdata)
 	GtkWidget* headerbar = gtk_header_bar_new();
 	gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(headerbar), 1);
 	gtk_window_set_titlebar(GTK_WINDOW(window), headerbar);
-	gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
+
+	GtkWidget* stack = gtk_stack_new();
+	gtk_stack_set_transition_duration(GTK_STACK(stack), 800);
+	gtk_stack_set_transition_type(
+		GTK_STACK(stack), 
+		GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT
+	);
+
+	GtkWidget* switcher = gtk_stack_switcher_new();
+	gtk_stack_switcher_set_stack(
+		GTK_STACK_SWITCHER(switcher), 
+		GTK_STACK(stack)
+	);
+	gtk_header_bar_set_custom_title(GTK_HEADER_BAR(headerbar), switcher);
 
 	GtkWidget* frontpage = frontpage_new();
-	gtk_widget_set_size_request(frontpage, 800, 800);
-	gtk_widget_set_halign(frontpage, GTK_ALIGN_CENTER);
-	//gtk_widget_set_valign(frontpage, GTK_ALIGN_CENTER);
-	gtk_container_add(GTK_CONTAINER(window), frontpage);
+	gtk_stack_add_titled(
+		GTK_STACK(stack), 
+		frontpage, 
+		"All Coins", 
+		"Front Page"
+	);
+
+	GtkWidget* globalstats = globalstats_new();
+	gtk_stack_add_titled(
+		GTK_STACK(stack), 
+		globalstats, 
+		"Global Stats", 
+		"Global Data"
+	);
+	gtk_container_add(GTK_CONTAINER(window), stack);
+
+	gint width, height;
+	gtk_widget_get_preferred_width(window, NULL, &width);
+	gtk_widget_get_preferred_height(window, NULL, &height);
+	gtk_window_set_default_size(GTK_WINDOW(window), width, height);
 	gtk_widget_show_all(window);
-	gtk_window_resize(GTK_WINDOW(window), 650, 800);
+	gtk_window_resize(GTK_WINDOW(window), width + 900, height + 500);
 }
 
 int main(int argc, char* argv[])
@@ -99,7 +128,10 @@ int main(int argc, char* argv[])
 	log_seterrorhandler(onerror, NULL);
 	setlocale(LC_NUMERIC, "");
 
-	GtkApplication* app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+	GtkApplication* app = gtk_application_new(
+		"org.erw.crypto", 
+		G_APPLICATION_FLAGS_NONE
+	);
 	g_signal_connect(app, "startup", G_CALLBACK(app_init), NULL);
 	g_signal_connect(app, "activate", G_CALLBACK(app_ctor), NULL);
 	
