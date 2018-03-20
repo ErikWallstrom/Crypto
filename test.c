@@ -55,22 +55,26 @@ static void populate_store(GtkListStore* store)
 		}
 
 		struct Str marketcapfmt;
-		str_ctorfmt(&marketcapfmt, "%'li", (glong)marketcap);
+		str_ctorfmt(&marketcapfmt, "<tt>%'li</tt>", (glong)marketcap);
 
 		struct Str pricefmt;
-		str_ctorfmt(&pricefmt, "%g", price);
+		str_ctorfmt(&pricefmt, "<tt>%g</tt>", price);
 
 		struct Str supplyfmt;
-		str_ctorfmt(&supplyfmt, "%'li", supply);
+		str_ctorfmt(&supplyfmt, "<tt>%'li</tt>", supply);
 
 		struct Str volumefmt;
-		str_ctorfmt(&volumefmt, "%'li", volume);
+		str_ctorfmt(&volumefmt, "<tt>%'li</tt>", volume);
 
 		struct Str changefmt;
-		str_ctorfmt(&changefmt, "%g", change);
+		str_ctorfmt(&changefmt, "%g</tt>", change);
 		if(changefmt.data[0] != '-')
 		{
-			str_prependfmt(&changefmt, "%c", '+');
+			str_prependfmt(&changefmt, "<tt>%c", '+');
+		}
+		else
+		{
+			str_prepend(&changefmt, "<tt>");
 		}
 
 		gtk_list_store_append(store, &iter);
@@ -134,12 +138,12 @@ static void add_column(
 	log_assert(type < NUM_COLUMNTYPES, "invalid type passed (%i)", type);
 
 	GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "font", "Monospace 14", NULL);
+	g_object_set(renderer, "font", "14", NULL);
 
 	GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(
 		title, 
 		renderer, 
-		"text", type, 
+		"markup", type, 
 		NULL
 	);
 
@@ -175,8 +179,8 @@ static gint marketcap_sort(
 	gtk_tree_model_get(model, a, GPOINTER_TO_INT(userdata), &name1, -1);
 	gtk_tree_model_get(model, b, GPOINTER_TO_INT(userdata), &name2, -1);
 
-	size_t len1 = strlen(name1);
-	size_t len2 = strlen(name2);
+	size_t len1 = strlen(name1) - 5;
+	size_t len2 = strlen(name2) - 5;
 
 	gint ret = 0;
 	if(len1 > len2)
@@ -189,7 +193,7 @@ static gint marketcap_sort(
 	}
 	else
 	{
-		for(size_t i = 0; i < len1; i++)
+		for(size_t i = 4; i < len1; i++)
 		{
 			if(name1[i] > name2[i])
 			{
@@ -222,8 +226,8 @@ static gint price_sort(
 	gtk_tree_model_get(model, a, COLUMNTYPE_PRICE, &name1, -1);
 	gtk_tree_model_get(model, b, COLUMNTYPE_PRICE, &name2, -1);
 
-	double price1 = atof(name1);
-	double price2 = atof(name2);
+	double price1 = atof(name1 + 4);
+	double price2 = atof(name2 + 4);
 
 	gint ret = 0;
 	if(price1 > price2)
@@ -253,8 +257,8 @@ static gint change_sort(
 	gtk_tree_model_get(model, a, COLUMNTYPE_CHANGE, &name1, -1);
 	gtk_tree_model_get(model, b, COLUMNTYPE_CHANGE, &name2, -1);
 
-	double price1 = atof(name1);
-	double price2 = atof(name2);
+	double price1 = atof(name1 + 4);
+	double price2 = atof(name2 + 4);
 
 	gint ret = 0;
 	if(price1 > price2)
@@ -323,7 +327,7 @@ GtkWidget* frontpage_new(void)
 
 	GtkWidget* tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(tree), 1);
-	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tree), 1);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tree), 0);
 	gtk_tree_view_set_grid_lines(
 		GTK_TREE_VIEW(tree), 
 		GTK_TREE_VIEW_GRID_LINES_BOTH
@@ -373,6 +377,11 @@ GtkWidget* globalstats_new(void)
 	double bitprice = json_object_get_double_member(object, "btcPrice");
 	double bitcapdom = bitmarketcap / totmarketcap * 100.0;
 	double bitvolumedom = bitvolume / totvolume * 100.0;
+
+	GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_set_margin_bottom(box, 100);
+	gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
+	gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
 
 	GtkWidget* grid = gtk_grid_new();
 	gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
@@ -558,6 +567,8 @@ GtkWidget* globalstats_new(void)
 
 	str_dtor(&httpresult);
 	httpclient_delete(http);
-	return grid;
+
+	gtk_box_set_center_widget(GTK_BOX(box), grid);
+	return box;
 }
 

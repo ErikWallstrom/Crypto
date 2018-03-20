@@ -4,13 +4,13 @@
 #include "log.h"
 #include "test.h"
 
-void onerror(void* userdata)
+static void onerror(void* userdata)
 {
 	(void)userdata;
 	abort();
 }
 
-void about_action(GSimpleAction* action, GVariant* param, void* userdata)
+static void about_action(GSimpleAction* action, GVariant* param, void* userdata)
 {
 	(void)action;
 	(void)param;
@@ -24,17 +24,18 @@ void about_action(GSimpleAction* action, GVariant* param, void* userdata)
 		"program-name", "Crypto",
 		"copyright", "Copyright © 2018 Erik Wallström",
 		"authors", (char*[]){"Erik Wallström", NULL},
-		"documenters", (char*[]){"Erik Wallström", NULL},
-		"website", "https://my_website.com/",
-		"website_label", "My Website",
+		//"documenters", (char*[]){"Erik Wallström", NULL},
+		"website", "https://github.com/ErikWallstrom/Crypto",
+		"website_label", "Github Link",
 		"version", "0.1 Alpha",
-		"comments", "GTK3 Wrapper for CoinCap.io",
+		"comments", "A cryptocurrency watcher made with GTK+3",
+		"license-type", GTK_LICENSE_GPL_3_0,
 		//"logo", gdk_pixbuf_new_from_file("gaben.png", NULL),
 		NULL
 	);
 }
 
-void quit_action(GSimpleAction* action, GVariant* param, void* userdata)
+static void quit_action(GSimpleAction* action, GVariant* param, void* userdata)
 {
 	(void)action;
 	(void)param;
@@ -47,7 +48,7 @@ void quit_action(GSimpleAction* action, GVariant* param, void* userdata)
 	g_application_quit(G_APPLICATION(userdata));
 }
 
-void app_init(GtkApplication* app, void* userdata)
+static void app_init(GtkApplication* app, void* userdata)
 {
 	(void)userdata;
 
@@ -75,7 +76,32 @@ void app_init(GtkApplication* app, void* userdata)
     );
 }
 
-void app_ctor(GtkApplication* app, void* userdata)
+static void search_changed(GtkSearchEntry* entry, void* userdata)
+{
+	(void)entry;
+	(void)userdata;
+}
+
+static void search_stopped(GtkSearchEntry* entry, void* userdata)
+{
+	(void)entry;
+
+	GtkToggleButton* toggle = GTK_TOGGLE_BUTTON(userdata);
+	gtk_toggle_button_set_active(toggle, 0);
+}
+
+static void search_toggled(GtkToggleButton* toggle, void* userdata)
+{
+	(void)toggle;
+
+	GtkSearchBar* searchbar = GTK_SEARCH_BAR(userdata);
+	gtk_search_bar_set_search_mode(
+		searchbar, 
+		!gtk_search_bar_get_search_mode(searchbar)
+	);
+}
+
+static void app_ctor(GtkApplication* app, void* userdata)
 {
 	(void)userdata;
 
@@ -98,13 +124,10 @@ void app_ctor(GtkApplication* app, void* userdata)
 	);
 	gtk_header_bar_set_custom_title(GTK_HEADER_BAR(headerbar), switcher);
 
+	GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	GtkWidget* frontpage = frontpage_new();
-	gtk_stack_add_titled(
-		GTK_STACK(stack), 
-		frontpage, 
-		"All Coins", 
-		"Front Page"
-	);
+	gtk_box_pack_end(GTK_BOX(box), frontpage, 1, 1, 0);
+	gtk_stack_add_titled(GTK_STACK(stack), box, "All Coins", "Front Page");
 
 	GtkWidget* globalstats = globalstats_new();
 	gtk_stack_add_titled(
@@ -114,6 +137,35 @@ void app_ctor(GtkApplication* app, void* userdata)
 		"Global Data"
 	);
 	gtk_container_add(GTK_CONTAINER(window), stack);
+
+	GtkWidget* image = gtk_image_new_from_icon_name(
+		"edit-find-symbolic", 
+		GTK_ICON_SIZE_BUTTON
+	);
+
+	GtkWidget* searchbar = gtk_search_bar_new();
+	GtkWidget* toggle = gtk_toggle_button_new();
+	gtk_button_set_image(GTK_BUTTON(toggle), image);
+	gtk_header_bar_pack_end(GTK_HEADER_BAR(headerbar), toggle);
+	g_signal_connect(toggle, "toggled", G_CALLBACK(search_toggled), searchbar);
+
+	GtkWidget* searchentry = gtk_search_entry_new();
+	g_signal_connect(
+		searchentry, 
+		"stop-search", 
+		G_CALLBACK(search_stopped), 
+		toggle
+	);
+	g_signal_connect(
+		searchentry, 
+		"search-changed", 
+		G_CALLBACK(search_changed), 
+		NULL
+	);
+
+	//gtk_search_bar_set_show_close_button(GTK_SEARCH_BAR(searchbar), 1);
+	gtk_container_add(GTK_CONTAINER(searchbar), searchentry);
+	gtk_box_pack_start(GTK_BOX(box), searchbar, 0, 0, 0);
 
 	gint width, height;
 	gtk_widget_get_preferred_width(window, NULL, &width);
