@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Crypto
-Exec=/home/erikwallstrom/Desktop/Crypto/crypto
+Exec=crypto
 Type=Application
-Categories=GTK;Crypto;Currency
+Categories=GTK;Utility;Finance;Monitor
 Comment=A crypto currency watcher made with GTK+3
 Terminal=false
-Version=0.1
+Version=1.1

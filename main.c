@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 	setlocale(LC_NUMERIC, "");
 
 	GtkApplication* app = gtk_application_new(
-		"org.erw.crypto", 
+		"io.github.erikwallstrom.Crypto", 
 		G_APPLICATION_FLAGS_NONE
 	);
 	g_signal_connect(app, "startup", G_CALLBACK(app_init), NULL);
