@@ -15,4 +15,4 @@ debug:
 
 install: 
 	install $(EXECUTABLE) /usr/bin/
-	install Crypto.desktop /usr/share/applications/
+	install io.github.erikwallstrom.Crypto.desktop /usr/share/applications/
