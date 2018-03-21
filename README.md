@@ -15,6 +15,8 @@ Currently requires network connection to start correctly
 ## Installation
 
 ```bash
+git clone https://github.com/ErikWallstrom/Crypto.git
+cd Crypto
 make
 sudo make install
 ```
