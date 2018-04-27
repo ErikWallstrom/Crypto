@@ -76,6 +76,25 @@ static void app_init(GtkApplication* app, void* userdata)
     );
 }
 
+static void key_pressed(GtkWidget* widget, GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_F11)
+	{
+		static int isfullscreen = 0;
+		GtkWindow* window = GTK_WINDOW(widget);
+		if(isfullscreen)
+		{
+			gtk_window_unfullscreen(window);
+			isfullscreen = 0;
+		}
+		else
+		{
+			gtk_window_fullscreen(window);
+			isfullscreen = 1;
+		}
+	}
+}
+
 static void search_changed(GtkSearchEntry* entry, void* userdata)
 {
 	(void)entry;
@@ -106,6 +125,8 @@ static void app_ctor(GtkApplication* app, void* userdata)
 	(void)userdata;
 
 	GtkWidget* window = gtk_application_window_new(app);
+	g_signal_connect(window, "key-press-event", G_CALLBACK(key_pressed), NULL);
+
 	GtkWidget* headerbar = gtk_header_bar_new();
 	gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(headerbar), 1);
 	gtk_window_set_titlebar(GTK_WINDOW(window), headerbar);
