@@ -2,6 +2,11 @@
 
 Crypto uses the CoinCap.io API to fetch up-to-date data about cryptocurrencies.
 
+## Screenshots
+
+![](./screenshot1.png)
+![](./screenshot2.png)
+
 ## Requirements
 
 * gcc
@@ -33,12 +38,10 @@ make
 sudo make install
 ```
 
-## Screenshots
+## Planned features
 
-![](./screenshot1.png)
-![](./screenshot2.png)
-
-
+* Portfolio
+* Warnings/notifications
 
 ## License
 
