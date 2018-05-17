@@ -15,13 +15,13 @@ Crypto uses the CoinCap.io API to fetch up-to-date data about cryptocurrencies.
 * json-glib
 * libcurl
 
-### Arch Linux (and derivatives)
+**Arch Linux (and derivatives)**
 
 ```bash
 sudo pacman -S gcc make gtk3 json-glib libcurl
 ```
 
-### Ubuntu (and derivatives)
+**Ubuntu (and derivatives)**
 
 ```bash
 sudo apt install gcc make libgtk-3-dev libjson-glib-dev libcurl4-openssl-dev 
