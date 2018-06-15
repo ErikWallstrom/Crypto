@@ -1,5 +1,7 @@
 # Crypto - A cryptocurrency watcher made with GTK+3
 
+Migrated to GitLab ([https://gitlab.com/ErikWallstrom/Crypto](https://gitlab.com/ErikWallstrom/Crypto))
+
 Crypto uses the CoinCap.io API to fetch up-to-date data about cryptocurrencies.
 
 ## Screenshots
